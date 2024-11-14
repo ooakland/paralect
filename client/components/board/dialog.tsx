@@ -4,7 +4,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogTrigger
 } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -12,22 +13,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+import { STATUSES } from '@/lib/constants';
+
 type BoardDialogProps = {
-  isOpen: boolean;
-  onClose: () => void;
+  children: React.ReactNode;
 };
 
-export const BoardDialog = ({ isOpen, onClose }: BoardDialogProps) => {
+export const BoardDialog = ({ children }: BoardDialogProps) => {
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={onClose}>
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='sm:max-w-[450px]'>
         <DialogHeader>
           <DialogTitle>Edit vacancy</DialogTitle>
           <DialogDescription>Make changes to your vacancy here. Click save when you&apos;re done.</DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4'>
+        <form className='grid gap-4 py-4'>
           <div className='grid items-center gap-2'>
             <Label htmlFor='name'>Company</Label>
             <Input
@@ -56,11 +57,11 @@ export const BoardDialog = ({ isOpen, onClose }: BoardDialogProps) => {
                 <SelectValue placeholder='Select vacancy status' />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup>
-                  <SelectItem value='active'>Active</SelectItem>
-                  <SelectItem value='archived'>Archived</SelectItem>
-                  <SelectItem value='closed'>Closed</SelectItem>
-                </SelectGroup>
+                {STATUSES.map((status: string) => (
+                  <SelectGroup key={status}>
+                    <SelectItem value={status}>{status}</SelectItem>
+                  </SelectGroup>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -71,7 +72,7 @@ export const BoardDialog = ({ isOpen, onClose }: BoardDialogProps) => {
               className='col-span-3'
             />
           </div>
-        </div>
+        </form>
         <DialogFooter>
           <Button type='submit'>Save changes</Button>
         </DialogFooter>

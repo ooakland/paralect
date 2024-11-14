@@ -1,49 +1,24 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BoardTableCell } from './table-cell';
 
+import { fetcher } from '@/lib/fetcher';
+import { BASE_URL } from '@/lib/constants';
+
+import { Vacancy } from '@/types';
+
 export const BoardTable = () => {
-  const vacancies = [
-    {
-      id: 1,
-      company: 'Paralect',
-      vacancy: 'Junior FullStack Engineer (React | Node)',
-      salaryFork: '500$-1000$',
-      status: 'active',
-      note: 'Need a test assigment'
-    },
-    {
-      id: 2,
-      company: 'LeverX',
-      vacancy: 'Junior Backend Engineer (Node.js)',
-      salaryFork: '700$-900$',
-      status: 'active',
-      note: 'Need a test assigment'
-    },
-    {
-      id: 3,
-      company: 'EPAM',
-      vacancy: 'Junior+ Frontend Engineer (React)',
-      salaryFork: '600$-800$',
-      status: 'active',
-      note: 'Strong verbal and written English (B2-C1)'
-    },
-    {
-      id: 4,
-      company: 'ID Finance',
-      vacancy: 'Junior Frontend Engineer (React)',
-      salaryFork: '400$-500$',
-      status: 'archived',
-      note: 'Experience in Fintech domain'
-    },
-    {
-      id: 5,
-      company: 'AIBY',
-      vacancy: 'Junior Frontend Engineer (Vue.js)',
-      salaryFork: '700$-800$',
-      status: 'archived',
-      note: '6+ months of experience with Vue.js'
-    }
-  ];
+  const { data: vacancies, isLoading } = useQuery({
+    queryKey: ['vacancies'],
+    retry: 1,
+    refetchOnWindowFocus: false,
+    queryFn: () => fetcher(BASE_URL)
+  });
+
+  if (isLoading) return 'Loading...';
 
   return (
     <Table>
@@ -59,10 +34,10 @@ export const BoardTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {vacancies.map((vacancy) => (
-          <TableRow key={vacancy.id}>
+        {vacancies?.data.map((vacancy: Vacancy) => (
+          <TableRow key={vacancy._id}>
             <TableCell className='font-medium'>{vacancy.company}</TableCell>
-            <TableCell>{vacancy.vacancy}</TableCell>
+            <TableCell>{vacancy.position}</TableCell>
             <TableCell className='font-medium'>{vacancy.salaryFork}</TableCell>
             <TableCell>{vacancy.status}</TableCell>
             <TableCell>{vacancy.note}</TableCell>
